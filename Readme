@@ -1,0 +1,45 @@
+Sure, here's a more detailed and elaborate Tableau training plan for two weeks, with 3 days of training each week, and 1 hour of training per day:
+
+Week 1:
+
+Day 1: Introduction to Tableau (1 hour)
+- Overview of Tableau and its features
+- Understanding the Tableau interface and workspace
+- Importing data into Tableau
+- Exploring basic data visualization techniques
+
+Day 2: Connecting to Data Sources and Data Preparation (1 hour)
+- Connecting Tableau to different data sources (Excel, CSV, databases, etc.)
+- Data cleansing and formatting for better analysis
+- Understanding data types and handling null values
+- Introduction to joins and blending data from multiple sources
+
+Day 3: Visualizations and Charts (1 hour)
+- Creating basic charts (bar, line, pie, etc.)
+- Customizing visuals with colors, labels, and tooltips
+- Using filters, groups, and hierarchies for deeper insights
+- Adding interactivity to visualizations using actions and filters
+
+Week 2:
+
+Day 1: Interactive Dashboards (1 hour)
+- Design principles for effective dashboards
+- Combining multiple visualizations into a dashboard
+- Implementing user interactions and controls (drop-downs, parameter controls)
+- Adding dynamic elements like highlight actions and URL actions
+
+Day 2: Advanced Calculations and Expressions (1 hour)
+- Understanding calculated fields and their use cases
+- Working with basic arithmetic and logical calculations
+- Using functions, IF-ELSE statements, and string manipulations
+- Applying level of detail (LOD) expressions for complex aggregations
+
+Day 3: Sharing and Publishing Dashboards (1 hour)
+- Saving and exporting Tableau workbooks
+- Publishing dashboards to Tableau Server or Tableau Public
+- Setting up permissions and security for shared dashboards
+- Using Tableau Reader for offline access to Tableau workbooks
+
+Throughout the training, you'll be working on hands-on exercises and projects to reinforce your learning. Don't forget to explore Tableau's online resources, such as the Tableau community forums and tutorials, to further enhance your skills and troubleshoot any questions that may arise during the training.
+
+By the end of this two-week plan, you should have a solid foundation in Tableau and be able to create insightful and interactive visualizations to analyze data effectively. Happy learning!
