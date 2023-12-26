@@ -1,4 +1,8 @@
-
+SELECT
+  Product,
+  COALESCE(MAX(Product) OVER (PARTITION BY Product ORDER BY CHAR_LENGTH(Product) DESC), Product) AS Custom_Calc
+FROM
+  product_query;
 
 
 SELECT
