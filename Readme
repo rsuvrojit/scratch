@@ -1,9 +1,12 @@
+
 SELECT
   Product,
-  COALESCE(MAX(Product) OVER (PARTITION BY Product ORDER BY CHAR_LENGTH(Product) DESC), Product) AS Custom_Calc
+  COALESCE(
+    FIRST_VALUE(Product) OVER (PARTITION BY LOWER(Product) ORDER BY CHAR_LENGTH(Product) DESC),
+    Product
+  ) AS Custom_Calc
 FROM
   product_query;
-
 
 SELECT
   p1.Product,
