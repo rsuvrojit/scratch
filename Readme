@@ -1,3 +1,18 @@
+
+
+
+SELECT
+  p1.Product,
+  COALESCE(
+    (SELECT p2.Product FROM product_query p2
+     WHERE CHAR_LENGTH(p2.Product) > CHAR_LENGTH(p1.Product)
+       AND p2.Product LIKE '%' || p1.Product || '%'
+     ORDER BY CHAR_LENGTH(p2.Product) DESC LIMIT 1),
+    p1.Product
+  ) AS Custom_Calc
+FROM
+  product_query p1;
+
 Sure, here's a more detailed and elaborate Tableau training plan for two weeks, with 3 days of training each week, and 1 hour of training per day:
 
 Week 1:
