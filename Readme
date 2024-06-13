@@ -1,67 +1,74 @@
-
-SELECT
-  Product,
-  COALESCE(
-    FIRST_VALUE(Product) OVER (PARTITION BY LOWER(Product) ORDER BY CHAR_LENGTH(Product) DESC),
-    Product
-  ) AS Custom_Calc
-FROM
-  product_query;
-
-SELECT
-  p1.Product,
-  COALESCE(
-    (SELECT p2.Product FROM product_query p2
-     WHERE CHAR_LENGTH(p2.Product) > CHAR_LENGTH(p1.Product)
-       AND p2.Product LIKE '%' || p1.Product || '%'
-     ORDER BY CHAR_LENGTH(p2.Product) DESC LIMIT 1),
-    p1.Product
-  ) AS Custom_Calc
-FROM
-  product_query p1;
-
-Sure, here's a more detailed and elaborate Tableau training plan for two weeks, with 3 days of training each week, and 1 hour of training per day:
-
-Week 1:
-
-Day 1: Introduction to Tableau (1 hour)
-- Overview of Tableau and its features
-- Understanding the Tableau interface and workspace
-- Importing data into Tableau
-- Exploring basic data visualization techniques
-
-Day 2: Connecting to Data Sources and Data Preparation (1 hour)
-- Connecting Tableau to different data sources (Excel, CSV, databases, etc.)
-- Data cleansing and formatting for better analysis
-- Understanding data types and handling null values
-- Introduction to joins and blending data from multiple sources
-
-Day 3: Visualizations and Charts (1 hour)
-- Creating basic charts (bar, line, pie, etc.)
-- Customizing visuals with colors, labels, and tooltips
-- Using filters, groups, and hierarchies for deeper insights
-- Adding interactivity to visualizations using actions and filters
-
-Week 2:
-
-Day 1: Interactive Dashboards (1 hour)
-- Design principles for effective dashboards
-- Combining multiple visualizations into a dashboard
-- Implementing user interactions and controls (drop-downs, parameter controls)
-- Adding dynamic elements like highlight actions and URL actions
-
-Day 2: Advanced Calculations and Expressions (1 hour)
-- Understanding calculated fields and their use cases
-- Working with basic arithmetic and logical calculations
-- Using functions, IF-ELSE statements, and string manipulations
-- Applying level of detail (LOD) expressions for complex aggregations
-
-Day 3: Sharing and Publishing Dashboards (1 hour)
-- Saving and exporting Tableau workbooks
-- Publishing dashboards to Tableau Server or Tableau Public
-- Setting up permissions and security for shared dashboards
-- Using Tableau Reader for offline access to Tableau workbooks
-
-Throughout the training, you'll be working on hands-on exercises and projects to reinforce your learning. Don't forget to explore Tableau's online resources, such as the Tableau community forums and tutorials, to further enhance your skills and troubleshoot any questions that may arise during the training.
-
-By the end of this two-week plan, you should have a solid foundation in Tableau and be able to create insightful and interactive visualizations to analyze data effectively. Happy learning!
+#1f77b4
+#ff7f0e
+#2ca02c
+#d62728
+#9467bd
+#8c564b
+#e377c2
+#7f7f7f
+#bcbd22
+#17becf
+#aec7e8
+#ffbb78
+#98df8a
+#ff9896
+#c5b0d5
+#c49c94
+#f7b6d2
+#c7c7c7
+#dbdb8d
+#9edae5
+#ff6347
+#4682b4
+#d2b48c
+#f0e68c
+#dda0dd
+#ee82ee
+#00ced1
+#afeeee
+#5f9ea0
+#4682b4
+#b0c4de
+#bdb76b
+#7b68ee
+#6a5acd
+#483d8b
+#7fffd4
+#40e0d0
+#48d1cc
+#00fa9a
+#00ff7f
+#adff2f
+#32cd32
+#9acd32
+#8fbc8f
+#3cb371
+#2e8b57
+#66cdaa
+#8a2be2
+#7fff00
+#d2691e
+#ff7f50
+#6495ed
+#fff8dc
+#dc143c
+#00ffff
+#00008b
+#008b8b
+#b8860b
+#a9a9a9
+#006400
+#a9a9a9
+#bdb76b
+#8b008b
+#556b2f
+#ff8c00
+#9932cc
+#8b0000
+#e9967a
+#8fbc8f
+#483d8b
+#2f4f4f
+#00ced1
+#9400d3
+#ff1493
