@@ -1,77 +1,49 @@
-<color>#1f77b4</color>
-<color>#ff7f0e</color>
-<color>#2ca02c</color>
-<color>#d62728</color>
-<color>#9467bd</color>
-<color>#8c564b</color>
-<color>#e377c2</color>
-<color>#7f7f7f</color>
-<color>#bcbd22</color>
-<color>#17becf</color>
-<color>#aec7e8</color>
-<color>#ffbb78</color>
-<color>#98df8a</color>
-<color>#ff9896</color>
-<color>#c5b0d5</color>
-<color>#c49c94</color>
-<color>#f7b6d2</color>
-<color>#c7c7c7</color>
-<color>#dbdb8d</color>
-<color>#9edae5</color>
-<color>#ff6347</color>
-<color>#4682b4</color>
-<color>#d2b48c</color>
-<color>#f0e68c</color>
-<color>#dda0dd</color>
-<color>#ee82ee</color>
-<color>#00ced1</color>
-<color>#afeeee</color>
-<color>#5f9ea0</color>
-<color>#b0c4de</color>
-<color>#bdb76b</color>
-<color>#7b68ee</color>
-<color>#6a5acd</color>
-<color>#483d8b</color>
-<color>#7fffd4</color>
-<color>#40e0d0</color>
-<color>#48d1cc</color>
-<color>#00fa9a</color>
-<color>#00ff7f</color>
-<color>#adff2f</color>
-<color>#32cd32</color>
-<color>#9acd32</color>
-<color>#8fbc8f</color>
-<color>#3cb371</color>
-<color>#2e8b57</color>
-<color>#66cdaa</color>
-<color>#8a2be2</color>
-<color>#7fff00</color>
-<color>#d2691e</color>
-<color>#ff7f50</color>
-<color>#6495ed</color>
-<color>#fff8dc</color>
-<color>#dc143c</color>
-<color>#00ffff</color>
-<color>#00008b</color>
-<color>#008b8b</color>
-<color>#b8860b</color>
-<color>#006400</color>
-<color>#556b2f</color>
-<color>#ff8c00</color>
-<color>#9932cc</color>
-<color>#8b0000</color>
-<color>#e9967a</color>
-<color>#8fbc8f</color>
-<color>#2f4f4f</color>
-<color>#9400d3</color>
-<color>#ff1493</color>
-<color>#ff69b4</color>
-<color>#ffb6c1</color>
-<color>#ffa07a</color>
-<color>#20b2aa</color>
-<color>#87cefa</color>
-<color>#778899</color>
-<color>#b0e0e6</color>
-<color>#ffdead</color>
-<color>#f08080</color>
-<color>#cd5c5c</color>
+In Tableau, labels in a stacked bar chart are displayed based on available space within each segment of the bar. When there is limited space, Tableau automatically decides whether to display a label to avoid overlap and ensure readability. Here’s how Tableau generally decides which segments to label:
+
+1. **Size of the Segment**:
+    - **Larger Segments**: Labels are more likely to be displayed in larger segments of the bar because there is more space to accommodate the text.
+    - **Smaller Segments**: Labels may not appear in smaller segments due to insufficient space for the text.
+
+2. **Relative Size and Importance**:
+    - Tableau tends to prioritize labeling segments that have more significant values (larger sales in your case) as these are often more important for analysis.
+    - Smaller values may get deprioritized for labeling if they do not have enough space.
+
+3. **Available Space and Overlap**:
+    - Tableau checks for overlap with other labels and tries to avoid it. If adding a label would cause overlap or clutter, it may omit the label.
+
+4. **Manual Adjustments**:
+    - You can manually adjust the labeling settings to prioritize which segments get labeled, though there are limitations based on space.
+
+### How to Manage Labels in a Stacked Bar Chart
+
+1. **Adjust Label Settings**:
+    - Go to the "Label" shelf.
+    - Ensure "Allow labels to overlap other marks" is unchecked (though checking it might force some labels to appear, it can lead to overlap).
+    - Consider reducing the font size to allow more labels to fit.
+
+2. **Using Abbreviations or Shortened Labels**:
+    - Shorten the labels if possible, to allow them to fit in smaller segments.
+
+3. **Custom Labeling**:
+    - You can create a calculated field to display labels selectively, focusing on larger or more significant segments.
+    - For example:
+      ```sql
+      IF SUM([Sales]) > [Threshold] THEN STR(SUM([Sales])) ELSE "" END
+      ```
+    - Replace `[Threshold]` with a value that determines when to display the label.
+
+4. **Use Tooltips for Detailed Information**:
+    - If space is too constrained, rely on tooltips for displaying detailed information. Users can hover over segments to see the sum of sales.
+
+5. **Reformat the Chart**:
+    - If your chart is too crowded, consider splitting it into smaller charts by categories or using a different type of visualization like a treemap, which may handle numerous categories better.
+
+### Manual Prioritization of Labels
+
+If you need more control over which segments get labeled, consider using Tableau’s "Annotation" feature:
+
+1. **Right-click** on the segment you want to label.
+2. Select "Annotate" > "Mark".
+3. Adjust the annotation box to display the desired information.
+
+By understanding how Tableau decides which labels to display and applying these adjustments, you can better manage the appearance of labels in your stacked bar chart.
