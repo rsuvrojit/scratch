@@ -1,49 +1,27 @@
-In Tableau, labels in a stacked bar chart are displayed based on available space within each segment of the bar. When there is limited space, Tableau automatically decides whether to display a label to avoid overlap and ensure readability. Here’s how Tableau generally decides which segments to label:
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import lit, when
+from pyspark.sql import functions as F
 
-1. **Size of the Segment**:
-    - **Larger Segments**: Labels are more likely to be displayed in larger segments of the bar because there is more space to accommodate the text.
-    - **Smaller Segments**: Labels may not appear in smaller segments due to insufficient space for the text.
+# Initialize Spark Session (Databricks automatically does this)
+spark = SparkSession.builder.appName("DynamicPivot").getOrCreate()
 
-2. **Relative Size and Importance**:
-    - Tableau tends to prioritize labeling segments that have more significant values (larger sales in your case) as these are often more important for analysis.
-    - Smaller values may get deprioritized for labeling if they do not have enough space.
+# Read data from an existing table
+df = spark.sql("SELECT * FROM data_table")
 
-3. **Available Space and Overlap**:
-    - Tableau checks for overlap with other labels and tries to avoid it. If adding a label would cause overlap or clutter, it may omit the label.
+# Show the initial data
+df.show()
 
-4. **Manual Adjustments**:
-    - You can manually adjust the labeling settings to prioritize which segments get labeled, though there are limitations based on space.
+# Get distinct values of 'd' column
+distinct_segment_values = df.select("segment").distinct().rdd.flatMap(lambda x: x).collect()
 
-### How to Manage Labels in a Stacked Bar Chart
+# Create pivot expressions
+pivot_exprs = [
+    F.max(when(F.col('segment') == val, lit(1)).otherwise(lit(0))).alias(val)
+    for val in distinct_segment_values
+]
 
-1. **Adjust Label Settings**:
-    - Go to the "Label" shelf.
-    - Ensure "Allow labels to overlap other marks" is unchecked (though checking it might force some labels to appear, it can lead to overlap).
-    - Consider reducing the font size to allow more labels to fit.
+# Pivot the data
+pivoted_df = df.groupBy("ID", "Territory", "Geography").agg(*pivot_exprs)
 
-2. **Using Abbreviations or Shortened Labels**:
-    - Shorten the labels if possible, to allow them to fit in smaller segments.
-
-3. **Custom Labeling**:
-    - You can create a calculated field to display labels selectively, focusing on larger or more significant segments.
-    - For example:
-      ```sql
-      IF SUM([Sales]) > [Threshold] THEN STR(SUM([Sales])) ELSE "" END
-      ```
-    - Replace `[Threshold]` with a value that determines when to display the label.
-
-4. **Use Tooltips for Detailed Information**:
-    - If space is too constrained, rely on tooltips for displaying detailed information. Users can hover over segments to see the sum of sales.
-
-5. **Reformat the Chart**:
-    - If your chart is too crowded, consider splitting it into smaller charts by categories or using a different type of visualization like a treemap, which may handle numerous categories better.
-
-### Manual Prioritization of Labels
-
-If you need more control over which segments get labeled, consider using Tableau’s "Annotation" feature:
-
-1. **Right-click** on the segment you want to label.
-2. Select "Annotate" > "Mark".
-3. Adjust the annotation box to display the desired information.
-
-By understanding how Tableau decides which labels to display and applying these adjustments, you can better manage the appearance of labels in your stacked bar chart.
+# Show the pivoted data
+pivoted_df.show()
