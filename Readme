@@ -1,74 +1,90 @@
-Root Cause Analysis (RCA) is a systematic process used to identify the underlying causes of issues to prevent recurrence. When preparing an RCA, it's important to focus on the process and system improvements rather than on assigning blame. Below is a template for the RCA that emphasizes process improvements and minimizing the human error factor.
+The situation you described involves the creation and termination of EC2 instances where the associated EBS volumes were not automatically deleted after the instances were terminated. Over time, this led to a large number of unattached (orphaned) EBS volumes, which continued to incur storage costs, causing unexpected charges.
+
+### **Explanation of What Happened:**
+
+1. **Instance Creation and Termination:**
+   - **Auto Scaling:** When the Auto Scaling group scaled up, it created new EC2 instances based on the launch template. Each instance had at least one EBS volume attached (usually the root volume).
+   - **Termination:** When the Auto Scaling group scaled down, instances were terminated. However, the EBS volumes associated with these instances were not deleted because the "Delete on Termination" option was not enabled in the launch template.
+
+2. **Accumulation of Unattached EBS Volumes:**
+   - Each time an instance was terminated without the "Delete on Termination" option enabled, the EBS volumes remained in your AWS account, unattached to any instance but still incurring storage costs.
+   - Over time, as more instances were launched and terminated, the number of orphaned EBS volumes increased, leading to significant costs.
+
+### **Why Did This Happen?**
+
+The root cause is a configuration oversight in the launch template. The "Delete on Termination" option for the EBS volumes was not enabled. This oversight is common when the focus is on launching and scaling instances, and the storage cleanup aspect is overlooked.
+
+### **Impact:**
+- **Financial Impact:** The cost impact can be substantial, especially if many instances were launched and terminated frequently. EBS volumes are charged based on the amount of storage provisioned, so a large number of unattached volumes could lead to high costs.
+- **Operational Impact:** Managing and cleaning up these orphaned volumes manually can be time-consuming and disruptive to regular operations.
+
+### **Mitigation and Prevention:**
+
+1. **Immediate Action:**
+   - **Identify and Delete Orphaned Volumes:** Use the AWS Console or CLI to list all unattached EBS volumes and delete those that are not needed.
+   - **Review Billing:** Analyze your AWS billing to understand the cost impact and identify any other potential cost anomalies.
+
+2. **Preventative Measures:**
+   - **Enable "Delete on Termination":** Update the launch template to ensure that the "Delete on Termination" option is enabled for all EBS volumes.
+   - **Monitor Orphaned Volumes:** Set up alerts or scripts to periodically check for unattached EBS volumes and review them for deletion.
+   - **Use AWS Config Rules:** Implement AWS Config rules to enforce that EBS volumes should be deleted upon instance termination unless explicitly required otherwise.
+
+### **Root Cause Analysis (RCA) Template:**
+
+When drafting the RCA, the goal is to objectively present the facts, the root cause, and the corrective actions without heavily focusing on human error. Here’s a template you can use:
 
 ---
 
-**Root Cause Analysis Report**
+**Root Cause Analysis (RCA) Report**
+
+**Project Name:** [Project Name]  
+**Date:** [Date]  
+**Prepared By:** [Your Name]  
+**Reviewed By:** [Reviewer’s Name]
+
+---
 
 ### 1. **Incident Overview**
-   - **Date of Incident:** [Insert Date]
-   - **Reported By:** [Your Name/Team Name]
-   - **Project/Service Impacted:** [Insert Project/Service Name]
-   - **Summary of Incident:**  
-     During a routine audit, it was discovered that several Elastic Block Store (EBS) volumes, created via a launch template used by the auto-scaling group, were not terminated along with their associated EC2 instances. This led to unexpected charges due to the storage of unused EBS volumes.
+   - **Incident Description:**  
+     During a review of AWS billing, it was discovered that significant costs were incurred due to a large number of unattached EBS volumes. These volumes were created by EC2 instances launched via an Auto Scaling group, and were not deleted when the instances were terminated.
 
-### 2. **Incident Details**
-   - **Description of the Issue:**  
-     The EBS volumes associated with terminated t2/t3 instances were not deleted, as the “Delete on Termination” option was not enabled in the launch template. These EBS volumes continued to accumulate costs after the EC2 instances were terminated.
+   - **Date of Incident:**  
+     [Date Range of the Issue]
 
-   - **Immediate Actions Taken:**  
-     - The EBS volumes were manually identified and terminated.
-     - A review of all existing launch templates was conducted to ensure the “Delete on Termination” option is enabled.
+   - **Impact:**  
+     Financial impact due to ongoing charges for unattached EBS volumes. Operational time spent on identifying and manually deleting orphaned volumes.
 
-### 3. **Root Cause**
-   - **Primary Cause:**  
-     The root cause was the omission of the “Delete on Termination” setting in the launch template configuration. This was a result of the default behavior in the AWS Console, where this option is not enabled unless explicitly configured.
+### 2. **Root Cause**
+   - **Technical Root Cause:**  
+     The launch template used by the Auto Scaling group did not have the "Delete on Termination" option enabled for the EBS volumes. As a result, when instances were terminated, their associated EBS volumes were not automatically deleted, leading to an accumulation of unattached volumes.
 
-   - **Contributing Factors:**  
-     - Lack of automated checks or alerts for EBS volume cleanup post-EC2 instance termination.
-     - No standard operating procedure (SOP) or checklist for launch template configurations that explicitly mandates enabling the “Delete on Termination” option.
-     - Limited awareness and training regarding the financial implications of leaving EBS volumes unattached.
+### 3. **Contributing Factors**
+   - The "Delete on Termination" option was not reviewed or enabled during the creation of the launch template.
+   - Lack of monitoring or alerts for unattached EBS volumes.
 
-### 4. **Impact Analysis**
-   - **Financial Impact:**  
-     - Unexpected charges incurred due to the storage of unused EBS volumes.
-   - **Operational Impact:**  
-     - No operational impact, as the issue was primarily financial.
+### 4. **Resolution and Corrective Actions**
+   - **Immediate Resolution:**  
+     All unattached EBS volumes were identified and deleted to stop further charges.
+   - **Corrective Actions:**
+     1. The launch template was updated to ensure the "Delete on Termination" option is enabled for EBS volumes.
+     2. Implemented an automated monitoring script to detect and report unattached EBS volumes.
+     3. Established a periodic review of Auto Scaling configurations to ensure best practices are followed.
 
-### 5. **Corrective and Preventative Actions**
-   - **Immediate Corrective Actions:**  
-     - Updated all active launch templates to ensure the “Delete on Termination” option is enabled for future instances.
-   - **Process Improvements:**  
-     - Implement an automated script or monitoring tool to identify and flag unattached EBS volumes periodically.
-     - Develop a checklist or SOP for creating and reviewing launch templates that includes the “Delete on Termination” option as a mandatory setting.
-     - Conduct training sessions for team members on AWS cost optimization and best practices to avoid similar issues in the future.
+### 5. **Preventative Measures**
+   - **Policy Update:**  
+     Update internal policies to mandate that all new launch templates have the "Delete on Termination" option enabled by default.
+   - **Training:**  
+     Conduct a training session for the team on best practices for configuring EC2 instances and managing EBS volumes.
+   - **AWS Config Rule:**  
+     Implement an AWS Config rule to enforce that EBS volumes associated with EC2 instances are deleted upon termination unless explicitly required otherwise.
 
 ### 6. **Lessons Learned**
-   - **Process Enhancements:**  
-     The incident highlighted the need for standardized procedures and automated checks to avoid manual configuration errors. By establishing and following a set process, such omissions can be prevented in the future.
+   - Importance of thoroughly reviewing launch templates for all options, particularly those with cost implications.
+   - Need for proactive monitoring of cloud resources to prevent similar incidents.
 
-### 7. **Action Plan**
-   - **Responsible Team/Person:** [Team Name/Person Name]
-   - **Action Items:**
-     1. Implement automated monitoring for unattached EBS volumes (Due Date: [Insert Date]).
-     2. Create and distribute a checklist for launch template configurations (Due Date: [Insert Date]).
-     3. Conduct training on AWS cost management and best practices (Due Date: [Insert Date]).
-   - **Review Date:** [Insert Date]
-   - **Approval:** [Manager/Leader Name]
-
-### 8. **Conclusion**
-This incident was primarily due to a gap in the existing process, where a critical configuration was overlooked. Moving forward, enhancements to our procedures and training will mitigate the risk of such issues occurring again. The focus is on continuous improvement of our processes to ensure better oversight and automation, reducing the reliance on manual settings.
+### 7. **Conclusion**
+   - The issue has been resolved, and steps have been taken to prevent recurrence. This incident highlights the importance of careful configuration management and ongoing resource monitoring.
 
 ---
 
-**How to Present the RCA**
-
-1. **Focus on Process, Not Individuals:**  
-   Highlight the systemic issues that allowed the error to occur, such as the lack of automated checks or missing SOPs. Avoid mentioning specific individuals who made the error.
-
-2. **Emphasize Improvements:**  
-   The RCA should demonstrate that steps are being taken to prevent this from happening again, showing a commitment to improving processes.
-
-3. **Show Accountability and Learning:**  
-   Present the incident as an opportunity to learn and improve, not as a failure. Discuss the new controls and processes to be implemented.
-
-By presenting the RCA in this way, you can minimize the focus on the human error and instead emphasize the positive steps taken to improve the process and prevent recurrence.
+This template helps focus on the incident and solutions rather than human error, ensuring a constructive and solution-oriented report.
