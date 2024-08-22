@@ -1,27 +1,74 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import lit, when
-from pyspark.sql import functions as F
+Root Cause Analysis (RCA) is a systematic process used to identify the underlying causes of issues to prevent recurrence. When preparing an RCA, it's important to focus on the process and system improvements rather than on assigning blame. Below is a template for the RCA that emphasizes process improvements and minimizing the human error factor.
 
-# Initialize Spark Session (Databricks automatically does this)
-spark = SparkSession.builder.appName("DynamicPivot").getOrCreate()
+---
 
-# Read data from an existing table
-df = spark.sql("SELECT * FROM data_table")
+**Root Cause Analysis Report**
 
-# Show the initial data
-df.show()
+### 1. **Incident Overview**
+   - **Date of Incident:** [Insert Date]
+   - **Reported By:** [Your Name/Team Name]
+   - **Project/Service Impacted:** [Insert Project/Service Name]
+   - **Summary of Incident:**  
+     During a routine audit, it was discovered that several Elastic Block Store (EBS) volumes, created via a launch template used by the auto-scaling group, were not terminated along with their associated EC2 instances. This led to unexpected charges due to the storage of unused EBS volumes.
 
-# Get distinct values of 'd' column
-distinct_segment_values = df.select("segment").distinct().rdd.flatMap(lambda x: x).collect()
+### 2. **Incident Details**
+   - **Description of the Issue:**  
+     The EBS volumes associated with terminated t2/t3 instances were not deleted, as the “Delete on Termination” option was not enabled in the launch template. These EBS volumes continued to accumulate costs after the EC2 instances were terminated.
 
-# Create pivot expressions
-pivot_exprs = [
-    F.max(when(F.col('segment') == val, lit(1)).otherwise(lit(0))).alias(val)
-    for val in distinct_segment_values
-]
+   - **Immediate Actions Taken:**  
+     - The EBS volumes were manually identified and terminated.
+     - A review of all existing launch templates was conducted to ensure the “Delete on Termination” option is enabled.
 
-# Pivot the data
-pivoted_df = df.groupBy("ID", "Territory", "Geography").agg(*pivot_exprs)
+### 3. **Root Cause**
+   - **Primary Cause:**  
+     The root cause was the omission of the “Delete on Termination” setting in the launch template configuration. This was a result of the default behavior in the AWS Console, where this option is not enabled unless explicitly configured.
 
-# Show the pivoted data
-pivoted_df.show()
+   - **Contributing Factors:**  
+     - Lack of automated checks or alerts for EBS volume cleanup post-EC2 instance termination.
+     - No standard operating procedure (SOP) or checklist for launch template configurations that explicitly mandates enabling the “Delete on Termination” option.
+     - Limited awareness and training regarding the financial implications of leaving EBS volumes unattached.
+
+### 4. **Impact Analysis**
+   - **Financial Impact:**  
+     - Unexpected charges incurred due to the storage of unused EBS volumes.
+   - **Operational Impact:**  
+     - No operational impact, as the issue was primarily financial.
+
+### 5. **Corrective and Preventative Actions**
+   - **Immediate Corrective Actions:**  
+     - Updated all active launch templates to ensure the “Delete on Termination” option is enabled for future instances.
+   - **Process Improvements:**  
+     - Implement an automated script or monitoring tool to identify and flag unattached EBS volumes periodically.
+     - Develop a checklist or SOP for creating and reviewing launch templates that includes the “Delete on Termination” option as a mandatory setting.
+     - Conduct training sessions for team members on AWS cost optimization and best practices to avoid similar issues in the future.
+
+### 6. **Lessons Learned**
+   - **Process Enhancements:**  
+     The incident highlighted the need for standardized procedures and automated checks to avoid manual configuration errors. By establishing and following a set process, such omissions can be prevented in the future.
+
+### 7. **Action Plan**
+   - **Responsible Team/Person:** [Team Name/Person Name]
+   - **Action Items:**
+     1. Implement automated monitoring for unattached EBS volumes (Due Date: [Insert Date]).
+     2. Create and distribute a checklist for launch template configurations (Due Date: [Insert Date]).
+     3. Conduct training on AWS cost management and best practices (Due Date: [Insert Date]).
+   - **Review Date:** [Insert Date]
+   - **Approval:** [Manager/Leader Name]
+
+### 8. **Conclusion**
+This incident was primarily due to a gap in the existing process, where a critical configuration was overlooked. Moving forward, enhancements to our procedures and training will mitigate the risk of such issues occurring again. The focus is on continuous improvement of our processes to ensure better oversight and automation, reducing the reliance on manual settings.
+
+---
+
+**How to Present the RCA**
+
+1. **Focus on Process, Not Individuals:**  
+   Highlight the systemic issues that allowed the error to occur, such as the lack of automated checks or missing SOPs. Avoid mentioning specific individuals who made the error.
+
+2. **Emphasize Improvements:**  
+   The RCA should demonstrate that steps are being taken to prevent this from happening again, showing a commitment to improving processes.
+
+3. **Show Accountability and Learning:**  
+   Present the incident as an opportunity to learn and improve, not as a failure. Discuss the new controls and processes to be implemented.
+
+By presenting the RCA in this way, you can minimize the focus on the human error and instead emphasize the positive steps taken to improve the process and prevent recurrence.
