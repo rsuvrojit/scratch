@@ -1,90 +1,41 @@
-The situation you described involves the creation and termination of EC2 instances where the associated EBS volumes were not automatically deleted after the instances were terminated. Over time, this led to a large number of unattached (orphaned) EBS volumes, which continued to incur storage costs, causing unexpected charges.
+Tableau Einstein Copilot: Key Features and How to Use Them
 
-### **Explanation of What Happened:**
+1. Building a Sample Visualization
 
-1. **Instance Creation and Termination:**
-   - **Auto Scaling:** When the Auto Scaling group scaled up, it created new EC2 instances based on the launch template. Each instance had at least one EBS volume attached (usually the root volume).
-   - **Termination:** When the Auto Scaling group scaled down, instances were terminated. However, the EBS volumes associated with these instances were not deleted because the "Delete on Termination" option was not enabled in the launch template.
+Tableau's Einstein Copilot offers AI-driven assistance to help you build visualizations based on your data. Here’s how you can use it to create a sample visualization:
 
-2. **Accumulation of Unattached EBS Volumes:**
-   - Each time an instance was terminated without the "Delete on Termination" option enabled, the EBS volumes remained in your AWS account, unattached to any instance but still incurring storage costs.
-   - Over time, as more instances were launched and terminated, the number of orphaned EBS volumes increased, leading to significant costs.
+Step 1: Upload your dataset or connect to a data source in Tableau.
 
-### **Why Did This Happen?**
+Step 2: In the toolbar, you’ll find the Einstein Copilot icon. Click on it and type a command, such as "Show sales trends over the last year."
 
-The root cause is a configuration oversight in the launch template. The "Delete on Termination" option for the EBS volumes was not enabled. This oversight is common when the focus is on launching and scaling instances, and the storage cleanup aspect is overlooked.
+Step 3: Einstein will analyze your data and suggest a visualization (e.g., a line chart for trends). You can confirm or adjust the type of visualization.
 
-### **Impact:**
-- **Financial Impact:** The cost impact can be substantial, especially if many instances were launched and terminated frequently. EBS volumes are charged based on the amount of storage provisioned, so a large number of unattached volumes could lead to high costs.
-- **Operational Impact:** Managing and cleaning up these orphaned volumes manually can be time-consuming and disruptive to regular operations.
+Step 4: The Copilot will automatically place the appropriate fields onto rows and columns, creating your chart.
 
-### **Mitigation and Prevention:**
+Step 5: You can then further customize the visualization by dragging and dropping fields or making design adjustments as needed.
 
-1. **Immediate Action:**
-   - **Identify and Delete Orphaned Volumes:** Use the AWS Console or CLI to list all unattached EBS volumes and delete those that are not needed.
-   - **Review Billing:** Analyze your AWS billing to understand the cost impact and identify any other potential cost anomalies.
 
-2. **Preventative Measures:**
-   - **Enable "Delete on Termination":** Update the launch template to ensure that the "Delete on Termination" option is enabled for all EBS volumes.
-   - **Monitor Orphaned Volumes:** Set up alerts or scripts to periodically check for unattached EBS volumes and review them for deletion.
-   - **Use AWS Config Rules:** Implement AWS Config rules to enforce that EBS volumes should be deleted upon instance termination unless explicitly required otherwise.
+2. Filtering, Sorting, and Grouping Data
 
-### **Root Cause Analysis (RCA) Template:**
+Einstein Copilot simplifies the process of filtering, sorting, and grouping data:
 
-When drafting the RCA, the goal is to objectively present the facts, the root cause, and the corrective actions without heavily focusing on human error. Here’s a template you can use:
+Filtering: Use Copilot commands like "Show only data from Q1 2024" or "Filter by country = 'United States.'" Einstein will create the filter for you and apply it to the visualization.
 
----
+Sorting: You can ask Einstein to sort data with commands such as "Sort the sales data by highest to lowest revenue." Einstein will update the view accordingly.
 
-**Root Cause Analysis (RCA) Report**
+Grouping: If you need to group data, simply instruct Einstein to "Group sales data by region." It will organize the data and update the visualization to reflect these groupings.
 
-**Project Name:** [Project Name]  
-**Date:** [Date]  
-**Prepared By:** [Your Name]  
-**Reviewed By:** [Reviewer’s Name]
 
----
+3. Creating a Calculated Field
 
-### 1. **Incident Overview**
-   - **Incident Description:**  
-     During a review of AWS billing, it was discovered that significant costs were incurred due to a large number of unattached EBS volumes. These volumes were created by EC2 instances launched via an Auto Scaling group, and were not deleted when the instances were terminated.
+Creating calculated fields with Einstein Copilot involves using natural language queries to define new metrics:
 
-   - **Date of Incident:**  
-     [Date Range of the Issue]
+Step 1: Open the Einstein Copilot and type a request like "Create a calculated field for profit margin as (Profit / Sales)."
 
-   - **Impact:**  
-     Financial impact due to ongoing charges for unattached EBS volumes. Operational time spent on identifying and manually deleting orphaned volumes.
+Step 2: Einstein will recognize the calculation, create the new field, and make it available in your dataset.
 
-### 2. **Root Cause**
-   - **Technical Root Cause:**  
-     The launch template used by the Auto Scaling group did not have the "Delete on Termination" option enabled for the EBS volumes. As a result, when instances were terminated, their associated EBS volumes were not automatically deleted, leading to an accumulation of unattached volumes.
+Step 3: You can then drag the calculated field onto your visualization for further analysis or to enhance your dashboard.
 
-### 3. **Contributing Factors**
-   - The "Delete on Termination" option was not reviewed or enabled during the creation of the launch template.
-   - Lack of monitoring or alerts for unattached EBS volumes.
 
-### 4. **Resolution and Corrective Actions**
-   - **Immediate Resolution:**  
-     All unattached EBS volumes were identified and deleted to stop further charges.
-   - **Corrective Actions:**
-     1. The launch template was updated to ensure the "Delete on Termination" option is enabled for EBS volumes.
-     2. Implemented an automated monitoring script to detect and report unattached EBS volumes.
-     3. Established a periodic review of Auto Scaling configurations to ensure best practices are followed.
+Einstein Copilot’s natural language capabilities make it easier to perform these tasks without needing to navigate through complex menus, enabling a more streamlined experience for both beginners and advanced users alike.
 
-### 5. **Preventative Measures**
-   - **Policy Update:**  
-     Update internal policies to mandate that all new launch templates have the "Delete on Termination" option enabled by default.
-   - **Training:**  
-     Conduct a training session for the team on best practices for configuring EC2 instances and managing EBS volumes.
-   - **AWS Config Rule:**  
-     Implement an AWS Config rule to enforce that EBS volumes associated with EC2 instances are deleted upon termination unless explicitly required otherwise.
-
-### 6. **Lessons Learned**
-   - Importance of thoroughly reviewing launch templates for all options, particularly those with cost implications.
-   - Need for proactive monitoring of cloud resources to prevent similar incidents.
-
-### 7. **Conclusion**
-   - The issue has been resolved, and steps have been taken to prevent recurrence. This incident highlights the importance of careful configuration management and ongoing resource monitoring.
-
----
-
-This template helps focus on the incident and solutions rather than human error, ensuring a constructive and solution-oriented report.
