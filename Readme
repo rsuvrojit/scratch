@@ -1,41 +1,78 @@
-Tableau Einstein Copilot: Key Features and How to Use Them
+Sub ExportEmailsToExcel_DateRange_Folder_Outlook()
+    Dim OutlookApp As Object
+    Dim Namespace As Object
+    Dim Folder As Object
+    Dim Item As Object
+    Dim ExcelApp As Object
+    Dim Workbook As Object
+    Dim Worksheet As Object
+    Dim i As Integer
+    Dim ReceivedDate As Date
+    Dim StartDate As Date
+    Dim EndDate As Date
+    Dim FolderName As String
 
-1. Building a Sample Visualization
+    ' Prompt for start and end dates in MM/DD/YYYY format
+    StartDate = InputBox("Enter the start date (MM/DD/YYYY):", "Date Selection")
+    EndDate = InputBox("Enter the end date (MM/DD/YYYY):", "Date Selection")
+    
+    ' Convert StartDate and EndDate to Date types for comparison
+    On Error Resume Next
+    StartDate = CDate(StartDate)
+    EndDate = CDate(EndDate)
+    On Error GoTo 0
+    If IsDate(StartDate) = False Or IsDate(EndDate) = False Then
+        MsgBox "Invalid date format. Please use MM/DD/YYYY.", vbExclamation
+        Exit Sub
+    End If
 
-Tableau's Einstein Copilot offers AI-driven assistance to help you build visualizations based on your data. Here’s how you can use it to create a sample visualization:
+    ' Prompt for folder name
+    FolderName = InputBox("Enter the name of the folder:", "Folder Selection")
 
-Step 1: Upload your dataset or connect to a data source in Tableau.
+    ' Initialize Outlook objects
+    Set OutlookApp = CreateObject("Outlook.Application")
+    Set Namespace = OutlookApp.GetNamespace("MAPI")
+    
+    ' Attempt to get the specified folder
+    On Error Resume Next
+    Set Folder = Namespace.GetDefaultFolder(6).Folders(FolderName) ' 6 is for Inbox
+    On Error GoTo 0
+    If Folder Is Nothing Then
+        MsgBox "Folder not found: " & FolderName, vbExclamation
+        Exit Sub
+    End If
 
-Step 2: In the toolbar, you’ll find the Einstein Copilot icon. Click on it and type a command, such as "Show sales trends over the last year."
+    ' Initialize Excel
+    Set ExcelApp = CreateObject("Excel.Application")
+    ExcelApp.Visible = True
+    Set Workbook = ExcelApp.Workbooks.Add
+    Set Worksheet = Workbook.Sheets(1)
 
-Step 3: Einstein will analyze your data and suggest a visualization (e.g., a line chart for trends). You can confirm or adjust the type of visualization.
+    ' Set up headers in Excel
+    Worksheet.Cells(1, 1).Value = "Received Date"
+    Worksheet.Cells(1, 2).Value = "Sender"
+    Worksheet.Cells(1, 3).Value = "Sent To"
+    Worksheet.Cells(1, 4).Value = "Subject"
+    Worksheet.Cells(1, 5).Value = "Body"
 
-Step 4: The Copilot will automatically place the appropriate fields onto rows and columns, creating your chart.
+    i = 2 ' Start writing data from row 2 in Excel
 
-Step 5: You can then further customize the visualization by dragging and dropping fields or making design adjustments as needed.
+    ' Loop through the items in the folder
+    For Each Item In Folder.Items
+        If Item.Class = 43 Then ' Ensure the item is a MailItem (Class 43)
+            ReceivedDate = Item.ReceivedTime
+            ' Check if the email falls within the specified date range
+            If ReceivedDate >= StartDate And ReceivedDate <= EndDate Then
+                ' Write email details to Excel
+                Worksheet.Cells(i, 1).Value = Format(ReceivedDate, "MM/DD/YYYY HH:MM:SS")
+                Worksheet.Cells(i, 2).Value = Item.SenderName
+                Worksheet.Cells(i, 3).Value = Item.To
+                Worksheet.Cells(i, 4).Value = Item.Subject
+                Worksheet.Cells(i, 5).Value = Left(Item.Body, 32767) ' Limit Body to avoid truncation
+                i = i + 1
+            End If
+        End If
+    Next Item
 
-
-2. Filtering, Sorting, and Grouping Data
-
-Einstein Copilot simplifies the process of filtering, sorting, and grouping data:
-
-Filtering: Use Copilot commands like "Show only data from Q1 2024" or "Filter by country = 'United States.'" Einstein will create the filter for you and apply it to the visualization.
-
-Sorting: You can ask Einstein to sort data with commands such as "Sort the sales data by highest to lowest revenue." Einstein will update the view accordingly.
-
-Grouping: If you need to group data, simply instruct Einstein to "Group sales data by region." It will organize the data and update the visualization to reflect these groupings.
-
-
-3. Creating a Calculated Field
-
-Creating calculated fields with Einstein Copilot involves using natural language queries to define new metrics:
-
-Step 1: Open the Einstein Copilot and type a request like "Create a calculated field for profit margin as (Profit / Sales)."
-
-Step 2: Einstein will recognize the calculation, create the new field, and make it available in your dataset.
-
-Step 3: You can then drag the calculated field onto your visualization for further analysis or to enhance your dashboard.
-
-
-Einstein Copilot’s natural language capabilities make it easier to perform these tasks without needing to navigate through complex menus, enabling a more streamlined experience for both beginners and advanced users alike.
-
+    MsgBox "Emails exported to Excel successfully!", vbInformation
+End Sub
