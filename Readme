@@ -1,17 +1,14 @@
-1. Object Structure Changes
-Are any new fields being added to the object? If so, which fields and what is their data type?
-Are any fields being removed from the object?
-Are any field names changing? If so, what are the old and new names?
-Are any field types being modified (e.g., from string to date)?
-2. Lifecycle and Workflow Changes
-Are new lifecycle states being introduced? If so, what are they, and how do they affect the current lifecycle state flow?
-Are any existing lifecycle states being removed or deprecated?
-Are there any new workflow steps being introduced? How does the workflow process change with the new steps?
-Are any existing workflow steps being removed or modified?
-Are there any changes to the conditions or logic for workflow progression?
-3. Business Logic Changes
-Is there any new business logic being introduced that will affect how data is classified or categorized?
-4. Data Access and Format Changes
-Are there any changes to data access (e.g., field-level security, API access)?
-Are there any changes to the format of the data (e.g., new fields, nested data, JSON structure)?
-Are there any changes to data relationships (e.g., how the object relates to others, foreign keys, etc.)?
+Type of Change,Action Required by EDL Team  
+Field Addition,Notify downstream teams; provide field description; sample values; and confirm if they need to update logic.  
+Field Value Changes,Share updated value lists; provide mapping if replacing old values; and communicate possible logic adjustments.  
+Field Type Changes,Notify downstream teams about the new type; share examples; and suggest handling for type conversions.  
+Field Removal,Notify downstream teams in advance; confirm field criticality; and provide alternatives or historical data.  
+Lifecycle State Changes,Share state changes; explain transitions; and suggest updates to conditional logic in downstream systems.  
+Workflow Step Changes,Notify downstream about workflow changes; explain impacts on timelines/orchestrations; and share updated steps.  
+Object Relationship Changes,Communicate new/removed relationships; update downstream schemas; and guide on incorporating new joins.  
+API Structure Changes,Share API changes; provide updated documentation; and assist in testing new integrations.  
+Data Access/Security Changes,Inform downstream of restricted access; ensure permissions updates; and provide alternative access methods.  
+Field Deprecation,Notify downstream; encourage transition to new fields; and share deprecation timelines.  
+Field Renaming,Communicate the new field name; assist in updating queries/schemas; and provide mapping to old names.  
+New Object Introduction,Notify downstream; share relationships and purpose; and provide sample data for testing.  
+Object Removal,Inform downstream in advance; provide alternatives or export historical data; and share removal timelines.  
