@@ -1,13 +1,17 @@
+1. Object Structure Changes
 Are any new fields being added to the object? If so, which fields and what is their data type?
-Are there any fields being removed from the object?
+Are any fields being removed from the object?
 Are any field names changing? If so, what are the old and new names?
-Are there any field types being modified (e.g., from string to date)?
+Are any field types being modified (e.g., from string to date)?
+2. Lifecycle and Workflow Changes
 Are new lifecycle states being introduced? If so, what are they, and how do they affect the current lifecycle state flow?
 Are any existing lifecycle states being removed or deprecated?
 Are there any new workflow steps being introduced? How does the workflow process change with the new steps?
-Are there any existing workflow steps being removed or modified?
+Are any existing workflow steps being removed or modified?
 Are there any changes to the conditions or logic for workflow progression?
+3. Business Logic Changes
 Is there any new business logic being introduced that will affect how data is classified or categorized?
+4. Data Access and Format Changes
 Are there any changes to data access (e.g., field-level security, API access)?
 Are there any changes to the format of the data (e.g., new fields, nested data, JSON structure)?
 Are there any changes to data relationships (e.g., how the object relates to others, foreign keys, etc.)?
